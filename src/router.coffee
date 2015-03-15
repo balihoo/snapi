@@ -33,6 +33,6 @@ exports.registerRoutes = (server, apiSpec, opts) ->
 
   for operation in operations
     if not routeHandlers[operation.operationId]?
-      throw new Error "No handler found for path #{operation.path}, method #{operation.method}, operation #{operation.operationId}"
+      throw new error.MissingRouteHandlerError operation
 
     registerRoute server, routeHandlers[operation.operationId], operation.method, operation.path, operation.operationId

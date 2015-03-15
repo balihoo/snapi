@@ -19,6 +19,8 @@ Object.defineProperty Error.prototype, 'toJSON', errorToJson
 
 module.exports = class Logger
   constructor: (opts) ->
+    opts.log = opts.log or {}
+    
     if opts.log.logger
       # User provided their own logger
       @log = opts.log.logger
@@ -29,7 +31,7 @@ module.exports = class Logger
       logConfig.streams = opts.log.streams or [
         path: opts.log.path or './apish.log'
         type: opts.log.type or 'rotating-file'
-        level: opts.log.level or 'debug'
+        level: opts.log.level or 'warn'
         period: opts.log.period or '1d'
         count: opts.log.count or 10
       ]

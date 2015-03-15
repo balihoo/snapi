@@ -11,26 +11,23 @@ codes =
 
 module.exports = class Responder
   constructor: (@logger, opts) ->
-    # Send basic auth challenges by default
-    @sendBasicAuthChallenge = true  unless opts.sendBasicAuthChallenge is false
-
     # If user has specified a responder use it
     @respond = opts.responder  if opts.responder
 
   errorResponse: (err, response, next) ->
     @logger.log.error err
 
-    if err instanceof restify.InvalidCredentialsError and @sendBasicAuthChallenge
+    if err instanceof restify.InvalidCredentialsError
       response.header 'Www-Authenticate', 'Basic'
 
     next err
 
-  respond: (maybePromise, response, next) ->
-    if maybePromise instanceof Error
-      @errorResponse maybePromise, response, next
+  respond: (result, response, next) ->
+    if result instanceof Error
+      @errorResponse result, response, next
     else
-      Promise.cast maybePromise
-      .then (result) =>
+      Promise.cast result
+      .then (result) ->
         response.header 'Content-Type', 'application/json; charset=utf-8'
         response.charSet = 'utf-8'
         

@@ -24,7 +24,6 @@ addParsers = (server, opts) ->
     server.use restify.queryParser()
 
 configureLogging = (server, opts) ->
-  opts.log = opts.log or {}
   logger = new Logger opts
 
   # Set up logging
