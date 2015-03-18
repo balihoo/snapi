@@ -36,9 +36,9 @@ describe 'logger unit tests', ->
         logger = new Logger {}
         assert.ok mockBunyan.calledOnce
         assert.ok mockBunyan.calledWith
-          name: 'apish'
+          name: 'snapi'
           streams: [
-            path: './apish.log'
+            path: './snapi.log'
             type: 'rotating-file'
             level: 'warn'
             period: '1d'

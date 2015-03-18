@@ -27,9 +27,9 @@ module.exports = class Logger
     else
       # Use bunyan for logging
       logConfig = {}
-      logConfig.name = opts.name or 'apish'
+      logConfig.name = opts.name or 'snapi'
       logConfig.streams = opts.log.streams or [
-        path: opts.log.path or './apish.log'
+        path: opts.log.path or './snapi.log'
         type: opts.log.type or 'rotating-file'
         level: opts.log.level or 'warn'
         period: opts.log.period or '1d'

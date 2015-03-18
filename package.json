@@ -1,7 +1,7 @@
 {
-  "name": "apish",
+  "name": "snapi",
   "version": "1.0.1",
-  "description": "An API first RESTful server framework built on Restify",
+  "description": "An API first RESTful server framework built on Swagger and Restify",
   "author": "Jeff Flitton",
   "engines": {
     "node": ">= 0.10.26"
