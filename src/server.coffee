@@ -7,16 +7,11 @@ Responder = require './responder'
 router = require './router'
 error = require './error'
 
-addParsers = (server, opts) ->
-  if opts.parsers
+addParsers = (server, parsers) ->
+  if Array.isArray parsers
     # User specified parsers to use
-    for parser, parserOpts of opts.parsers
-      if typeof parser is 'string'
-        switch parser.toLowerCase()
-          when 'body' then server.use restify.bodyParser(parserOpts)
-          when 'authorization' then server.use restify.authorizationParser(parserOpts)
-          when 'query' then server.use restify.queryParser(parserOpts)
-
+    for parser in parsers
+      server.use parser.parser(parser.options)
   else
     # Use the default parsers
     server.use restify.bodyParser(mapParams: false)
@@ -41,21 +36,21 @@ setApi = (server, opts) ->
 
   apiSpec = opts.api
   apiSpec = require opts.api  if typeof opts.api is 'string'
-    
+
   swaggerTools.initializeMiddleware apiSpec, (middleware) ->
     # Interpret Swagger resources and attach metadata to request.swagger
     server.use middleware.swaggerMetadata()
-  
+
   # Add routes
   router.registerRoutes server, apiSpec, opts
 
 exports.createServer = (opts) ->
   opts = opts or {}
   server = restify.createServer opts
-  
-  addParsers server, opts
+
+  addParsers server, opts.parsers
   configureLogging server, opts
-  server.responder = new Responder server.logger, opts
+  server.responder = new Responder server.logger, opts.responder
   setApi server, opts
 
   server

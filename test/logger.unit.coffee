@@ -4,15 +4,16 @@ mockery = require 'mockery'
 
 Logger = undefined
 mockBunyan = sinon.spy()
+fakeErr = new Error "loud noises!"
 
 describe 'logger unit tests', ->
-  describe 'constructor', ->
-    before ->
-      mockery.enable()
-      mockery.registerAllowable '../lib/logger'
-      mockery.registerMock 'bunyan', mockBunyan
-      Logger = require '../lib/logger'
+  before ->
+    mockery.enable()
+    mockery.registerAllowable '../lib/logger'
+    mockery.registerMock 'bunyan', mockBunyan
+    Logger = require '../lib/logger'
 
+  describe 'constructor', ->
     context 'when a logger is supplied', ->
       it 'uses the supplied logger', ->
         Logger = require '../lib/logger'
@@ -44,5 +45,93 @@ describe 'logger unit tests', ->
             period: '1d'
             count: 10
           ]
-    after ->
-      mockery.disable()
+
+  describe 'unhandledRejection()', ->
+    it 'calls log.error', ->
+      Logger = require '../lib/logger'
+
+      customLogger =
+        error: ->
+        info: ->
+        fatal: ->
+
+      mockLogger = sinon.mock customLogger
+      mockLogger.expects('error').once().withArgs(
+        unhandledRejection: true
+        err: fakeErr,
+        fakeErr.message
+      )
+
+      logger = new Logger
+        log:
+          logger: customLogger
+
+      logger.unhandledRejection fakeErr
+      mockLogger.verify()
+
+  describe 'unhandledProcessException()', ->
+    it 'calls log.fatal', ->
+      Logger = require '../lib/logger'
+
+      customLogger =
+        error: ->
+        info: ->
+        fatal: ->
+
+      mockLogger = sinon.mock customLogger
+      mockLogger.expects('fatal').once().withArgs(
+        unhandledProcessException: true
+        err: fakeErr,
+        fakeErr.message
+      )
+
+      logger = new Logger
+        log:
+          logger: customLogger
+
+      logger.unhandledProcessException fakeErr
+      mockLogger.verify()
+
+  describe 'unhandledRestifyException()', ->
+    it 'calls log.error and sends an internal server error', ->
+      res = send: ->
+      mockRes = sinon.mock res
+      mockRes.expects('send').once().withArgs 500, 'Internal server error'
+      
+      fakeReq = some: 'request'
+      fakeRoute = some: 'route'
+      
+      Logger = require '../lib/logger'
+
+      customLogger =
+        error: ->
+        info: ->
+        fatal: ->
+
+      mockLogger = sinon.mock customLogger
+      mockLogger.expects('error').once().withArgs(
+        req: fakeReq
+        res: res
+        route: fakeRoute
+        unhandledRestifyException: true
+        err: fakeErr,
+        fakeErr.message
+      )
+
+      logger = new Logger
+        log:
+          logger: customLogger
+
+      logger.unhandledRestifyException fakeReq, res, fakeRoute, fakeErr
+      mockLogger.verify()
+      mockRes.verify()
+
+  describe 'errorToJson()', ->
+    it 'includes custom error properties', ->
+      err = new Error("Some error")
+      err.customProp = "Something else"
+      result = err.toJSON()
+      assert.ok result.customProp
+      
+  after ->
+    mockery.disable()

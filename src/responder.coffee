@@ -10,9 +10,9 @@ codes =
   notAuthorized: 403
 
 module.exports = class Responder
-  constructor: (@logger, opts) ->
+  constructor: (@logger, responder) ->
     # If user has specified a responder use it
-    @respond = opts.responder  if opts.responder
+    @respond = responder  if responder
 
   errorResponse: (err, response, next) ->
     @logger.log.error err
