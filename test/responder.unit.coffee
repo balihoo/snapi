@@ -2,15 +2,25 @@ assert = require 'assert'
 sinon = require 'sinon'
 Promise = require 'bluebird'
 InvalidCredentialsError = require('restify').InvalidCredentialsError
+Logger = require '../lib/logger'
 Responder = require '../lib/responder'
 
 logger = undefined
 response = undefined
 
+customLogger =
+  error: ->
+  info: ->
+  fatal: ->
+  
+mockLogger = undefined
+
 describe 'responder unit tests', ->
   beforeEach ->
-    Logger = require '../lib/logger'
-    logger = new Logger {}
+    mockLogger = sinon.mock customLogger
+    logger = new Logger
+      log:
+        logger: customLogger
 
     response =
       header: ->
@@ -71,10 +81,12 @@ describe 'responder unit tests', ->
 
           mockResponse = sinon.mock response
           mockResponse.expects('header').once().withArgs 'Www-Authenticate', 'Basic'
-
+          mockLogger.expects('error').once().withArgs fakeError
+          
           next = (err) ->
             assert.strictEqual err, fakeError
             mockResponse.verify()
+            mockLogger.verify()
             done()
 
           responder.respond fakeError, response, next
@@ -86,10 +98,12 @@ describe 'responder unit tests', ->
 
           mockResponse = sinon.mock response
           mockResponse.expects('header').never()
-
+          mockLogger.expects('error').once().withArgs fakeError
+          
           next = (err) ->
             assert.strictEqual err, fakeError
             mockResponse.verify()
+            mockLogger.verify()
             done()
 
           responder.respond fakeError, response, next
@@ -102,9 +116,11 @@ describe 'responder unit tests', ->
           mockResponse = sinon.mock response
           mockResponse.expects('header').once().withArgs 'Content-Type', 'application/json; charset=utf-8'
           mockResponse.expects('json').once().withArgs responder.codes.successWithBody, result
-
+          mockLogger.expects('error').never()
+          
           next = ->
             mockResponse.verify()
+            mockLogger.verify()
             assert.strictEqual response.charSet, 'utf-8'
             done()
 
@@ -118,9 +134,11 @@ describe 'responder unit tests', ->
           mockResponse = sinon.mock response
           mockResponse.expects('header').once().withArgs 'Content-Type', 'application/json; charset=utf-8'
           mockResponse.expects('send').once().withArgs responder.codes.successNoBody
-
+          mockLogger.expects('error').never()
+          
           next = ->
             mockResponse.verify()
+            mockLogger.verify()
             assert.strictEqual response.charSet, 'utf-8'
             done()
 
@@ -133,10 +151,12 @@ describe 'responder unit tests', ->
 
           mockResponse = sinon.mock response
           mockResponse.expects('header').once().withArgs 'Www-Authenticate', 'Basic'
+          mockLogger.expects('error').once().withArgs fakeError
 
           next = (err) ->
             assert.strictEqual err, fakeError
             mockResponse.verify()
+            mockLogger.verify()
             done()
 
           responder.respond Promise.reject(fakeError), response, next
@@ -148,10 +168,15 @@ describe 'responder unit tests', ->
 
           mockResponse = sinon.mock response
           mockResponse.expects('header').never()
-
+          mockLogger.expects('error').once().withArgs fakeError
+          
           next = (err) ->
             assert.strictEqual err, fakeError
             mockResponse.verify()
+            mockLogger.verify()
             done()
 
           responder.respond Promise.reject(fakeError), response, next
+          
+  afterEach ->
+    mockLogger.restore()
