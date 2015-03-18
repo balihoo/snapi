@@ -8,7 +8,7 @@ fakeErr = new Error "loud noises!"
 
 describe 'logger unit tests', ->
   before ->
-    mockery.enable()
+    mockery.enable useCleanCache: true
     mockery.registerAllowable '../lib/logger'
     mockery.registerMock 'bunyan', mockBunyan
     Logger = require '../lib/logger'
@@ -97,10 +97,10 @@ describe 'logger unit tests', ->
       res = send: ->
       mockRes = sinon.mock res
       mockRes.expects('send').once().withArgs 500, 'Internal server error'
-      
+
       fakeReq = some: 'request'
       fakeRoute = some: 'route'
-      
+
       Logger = require '../lib/logger'
 
       customLogger =
@@ -132,6 +132,7 @@ describe 'logger unit tests', ->
       err.customProp = "Something else"
       result = err.toJSON()
       assert.ok result.customProp
-      
+
   after ->
+    mockery.deregisterAll()
     mockery.disable()

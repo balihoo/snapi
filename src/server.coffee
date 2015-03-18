@@ -26,9 +26,9 @@ configureLogging = (server, opts) ->
     name: 'audit'
     log: logger.log
 
-  Promise.onPossiblyUnhandledRejection(opts.log.unhandledErrorHandler or logger.unhandledRejection)
-  process.on 'uncaughtException', (opts.log.unhandledErrorHandler or logger.unhandledProcessException)
-  server.on 'uncaughtException', (opts.log.unhandledErrorHandler or logger.unhandledRestifyException)
+  Promise.onPossiblyUnhandledRejection logger.unhandledRejection
+  process.on 'uncaughtException', logger.unhandledProcessException
+  server.on 'uncaughtException', logger.unhandledRestifyException
   server.logger = logger
 
 setApi = (server, opts) ->

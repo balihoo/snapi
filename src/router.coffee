@@ -10,7 +10,7 @@ restifyPath = (path) ->
   path = path.split('{').join ':'
   path.split('}').join ''
 
-registerRoute = (server, handler, method, path, operationId) ->
+registerRoute = (server, method, path, handler) ->
   method = restifyMethod method
   path = restifyPath path
 
@@ -35,4 +35,4 @@ exports.registerRoutes = (server, apiSpec, opts) ->
     if not routeHandlers[operation.operationId]?
       throw new error.MissingRouteHandlerError operation
 
-    registerRoute server, routeHandlers[operation.operationId], operation.method, operation.path, operation.operationId
+    registerRoute server, operation.method, operation.path, routeHandlers[operation.operationId]

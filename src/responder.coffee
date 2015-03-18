@@ -10,9 +10,7 @@ codes =
   notAuthorized: 403
 
 module.exports = class Responder
-  constructor: (@logger, responder) ->
-    # If user has specified a responder use it
-    @respond = responder  if responder
+  constructor: (@logger, @customRespond) ->
 
   errorResponse: (err, response, next) ->
     @logger.log.error err
@@ -23,21 +21,24 @@ module.exports = class Responder
     next err
 
   respond: (result, response, next) ->
-    if result instanceof Error
-      @errorResponse result, response, next
+    if @customRespond
+      @customRespond result, response, next
     else
-      Promise.cast result
-      .then (result) ->
-        response.header 'Content-Type', 'application/json; charset=utf-8'
-        response.charSet = 'utf-8'
-        
-        if result
-          response.json codes.successWithBody, result
-        else
-          response.send codes.successNoBody
-          
-        next()
-      .catch (err) =>
-        @errorResponse err, response, next
+      if result instanceof Error
+        @errorResponse result, response, next
+      else
+        Promise.cast result
+        .then (result) ->
+          response.header 'Content-Type', 'application/json; charset=utf-8'
+          response.charSet = 'utf-8'
+
+          if result
+            response.json codes.successWithBody, result
+          else
+            response.send codes.successNoBody
+
+          next()
+        .catch (err) =>
+          @errorResponse err, response, next
 
   codes: codes
