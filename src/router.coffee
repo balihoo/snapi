@@ -26,9 +26,6 @@ exports.registerRoutes = (server, apiSpec, opts) ->
   throw new error.MissingRouteHandlersConfigError  unless opts.routeHandlers
   
   routeHandlers = opts.routeHandlers
-  if typeof routeHandlers is 'string'
-    routeHandlers = require routeHandlers
-  
   operations = swagger2.createOperationsList apiSpec
 
   for operation in operations

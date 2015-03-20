@@ -1,56 +1,111 @@
 assert = require 'assert'
 sinon = require 'sinon'
-mockery = require 'mockery'
-bluebird = require 'bluebird'
-swaggerTools = require 'swagger-tools'
-error = require '../lib/error'
-logger = require '../lib/logger'
-responder = require '../lib/responder'
-router = require '../lib/router'
+mocker = require './mocker'
+simpleApi = require './simpleApi'
 
 server = undefined
-mockLogger = sinon.mock logger
-mockResponder = sinon.mock responder
-mockRouter = sinon.mock router
-mockSwaggerTools = sinon.mock swaggerTools
-
-restify =
-  createServer: () ->
-    use: ->
-    on: ->
-  authorizationParser: ->
-  queryParser: ->
-  bodyParser: ->
-  auditLogger: ->
-
-mockRestify = sinon.mock restify
-restify.blergh = 'blergh'
-mockBluebird = sinon.mock bluebird
-
+mocks = undefined
+mocked = undefined
 fakeErr = new Error "loud noises!"
 
 describe 'server unit tests', ->
-  before ->
-    mockery.enable useCleanCache: true
-    mockery.registerMock 'bluebird', bluebird
-    mockery.registerMock './logger', logger
-    mockery.registerMock './responder', responder
-    mockery.registerMock './router', router
-    mockery.registerMock 'swagger-tools', swaggerTools
-    mockery.registerMock 'restify', restify
-    mockery.registerAllowable './error'
-    mockery.registerAllowable '../lib/server'
+  beforeEach ->
+    mocker.mock 'bluebird'
+    mocker.mock 'swagger-tools'
+    mocker.mock 'restify', mocker.fakes.restify
+    mocker.mock '../lib/logger'
+    mocker.mock '../lib/responder'
+    mocker.mock '../lib/router'
+    mocker.mock '../lib/error'
+    mocker.mockInternal 'restifyServer', mocker.fakes.restifyServer
+    mocker.allow '../lib/server'
+    mocker.enable()
     server = require '../lib/server'
-    
+    mocks = mocker.mocks
+    mocked = mocker.mocked
+
   describe 'createServer', ->
-    context 'when no options are supplied', ->
+    context 'when no API is supplied', ->
       it 'throws a MissingApiConfigError', ->
         try
-          server.createServer()
+          mocks.restify.expects 'createServer'
+          .once()
+          .returns mocked.restifyServer
+
+          server.createServer
+            routeHandlers:
+              someHandler: ->
+
           assert.fail 'Expected MissingApiConfigError'
         catch err
           assert.strictEqual err.name, 'MissingApiConfig'
+
+    context 'when no route handlers are provided', ->
+      it 'throws a MissingRouteHandlersConfigError', ->
+        try
+          mocks.restify.expects 'createServer'
+          .once()
+          .returns mocked.restifyServer
           
-  after ->
-    mockery.deregisterAll()
-    mockery.disable()
+          mocks['swagger-tools'].expects 'initializeMiddleware'
+
+          server.createServer api: simpleApi
+          assert.fail 'Expected MissingRouteHandlersConfigError'
+        catch err
+          assert.strictEqual err.name, 'MissingRouteHandlersConfig'
+
+    context 'when a route handler is missing', ->
+      it 'throws a MissingRouteHandlerError', ->
+        try
+          mocks.restify.expects 'createServer'
+          .once()
+          .returns mocked.restifyServer
+
+          mocks['swagger-tools'].expects 'initializeMiddleware'
+
+          server.createServer api: simpleApi, routeHandlers: getStuff: ->
+          assert.fail 'Expected MissingRouteHandlerError'
+        catch err
+          assert.strictEqual err.name, 'MissingRouteHandler'
+    
+    context 'when parsers are not specified', ->
+      it 'creates a server with the default parsers', ->
+        bodyParser = ->
+        authorizationParser = ->
+        queryParser = ->
+
+        mocks.restify.expects 'createServer'
+        .returns mocked.restifyServer
+
+        mocks['swagger-tools'].expects 'initializeMiddleware'
+
+        mocks.restify.expects 'bodyParser'
+        .once()
+        .withArgs mapParams: false
+        .returns bodyParser
+
+        mocks.restify.expects 'authorizationParser'
+        .once()
+        .returns authorizationParser
+
+        mocks.restify.expects 'queryParser'
+        .once()
+        .returns queryParser
+
+        mocks.restifyServer.expects 'use'
+        .withArgs bodyParser
+        .once()
+
+        mocks.restifyServer.expects 'use'
+        .withArgs authorizationParser
+        .once()
+
+        mocks.restifyServer.expects 'use'
+        .withArgs queryParser
+        .once()
+
+        server.createServer api: simpleApi, routeHandlers: getUsers: ->
+
+  afterEach ->
+    mocker.verify()
+    mocker.disable()

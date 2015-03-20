@@ -18,7 +18,7 @@ MissingRouteHandlersConfigError.prototype.__proto__= Error.prototype
 
 exports.MissingRouteHandlerError =  MissingRouteHandlerError = (operation)->
   self = new Error "No handler found for #{operation.method} #{operation.path}, operation ID #{operation.operationId}."
-  self.name = 'MissingRouteHandlerError'
+  self.name = 'MissingRouteHandler'
   self.path = operation.path
   self.method = operation.method
   self.operationId = operation.operationId

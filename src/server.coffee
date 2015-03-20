@@ -34,15 +34,12 @@ configureLogging = (server, opts) ->
 setApi = (server, opts) ->
   throw new error.MissingApiConfigError()  unless opts.api
 
-  apiSpec = opts.api
-  apiSpec = require opts.api  if typeof opts.api is 'string'
-
-  swaggerTools.initializeMiddleware apiSpec, (middleware) ->
+  swaggerTools.initializeMiddleware opts.api, (middleware) ->
     # Interpret Swagger resources and attach metadata to request.swagger
     server.use middleware.swaggerMetadata()
 
   # Add routes
-  router.registerRoutes server, apiSpec, opts
+  router.registerRoutes server, opts.api, opts
 
 exports.createServer = (opts) ->
   opts = opts or {}
