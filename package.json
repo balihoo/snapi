@@ -1,7 +1,7 @@
 {
-  "name": "snapi",
-  "version": "1.0.1",
-  "description": "An API first RESTful server framework built on Swagger and Restify",
+  "name": "snapi2",
+  "version": "0.2.1",
+  "description": "An API-first RESTful server framework built on Swagger and Restify",
   "author": "Jeff Flitton",
   "engines": {
     "node": ">= 0.10.26"
@@ -12,8 +12,7 @@
     "bunyan": "^1.3.3",
     "restify": "^2.8.3",
     "swagger-tools": "^0.8.0",
-    "swagger2-utils": "^2.0.7",
-    "tv4": "^1.1.9"
+    "swagger2-utils": "^2.0.7"
   },
   "devDependencies": {
     "coffee-script": "^1.8.0",
@@ -30,5 +29,23 @@
   },
   "scripts": {
     "test": "node node_modules/gulp/bin/gulp.js build"
-  }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jflitton/snapi.git"
+  },
+  "keywords": [
+    "api-first",
+    "rest",
+    "swagger",
+    "restify"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jflitton/snapi/issues"
+  },
+  "homepage": "https://github.com/jflitton/snapi"
 }
