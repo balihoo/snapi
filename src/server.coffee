@@ -26,9 +26,9 @@ configureLogging = (server, opts) ->
     name: 'audit'
     log: logger.log
 
-  Promise.onPossiblyUnhandledRejection logger.unhandledRejection
-  process.on 'uncaughtException', logger.unhandledProcessException
-  server.on 'uncaughtException', logger.unhandledRestifyException
+  Promise.onPossiblyUnhandledRejection logger.unhandledRejection()
+  process.on 'uncaughtException', logger.unhandledProcessException()
+  server.on 'uncaughtException', logger.unhandledRestifyException()
   server.logger = logger
 
 setApi = (server, opts) ->
@@ -37,6 +37,9 @@ setApi = (server, opts) ->
   swaggerTools.initializeMiddleware opts.api, (middleware) ->
     # Interpret Swagger resources and attach metadata to request.swagger
     server.use middleware.swaggerMetadata()
+
+    # Validate requests against the swagger metadata
+    server.use middleware.swaggerValidator()
 
   # Add routes
   router.registerRoutes server, opts.api, opts

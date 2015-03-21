@@ -66,7 +66,8 @@ describe 'logger unit tests', ->
         log:
           logger: customLogger
 
-      logger.unhandledRejection fakeErr
+      handler = logger.unhandledRejection()
+      handler fakeErr
       mockLogger.verify()
 
   describe 'unhandledProcessException()', ->
@@ -89,7 +90,8 @@ describe 'logger unit tests', ->
         log:
           logger: customLogger
 
-      logger.unhandledProcessException fakeErr
+      handler = logger.unhandledProcessException()
+      handler fakeErr
       mockLogger.verify()
 
   describe 'unhandledRestifyException()', ->
@@ -122,7 +124,8 @@ describe 'logger unit tests', ->
         log:
           logger: customLogger
 
-      logger.unhandledRestifyException fakeReq, res, fakeRoute, fakeErr
+      handler = logger.unhandledRestifyException()
+      handler fakeReq, res, fakeRoute, fakeErr
       mockLogger.verify()
       mockRes.verify()
 

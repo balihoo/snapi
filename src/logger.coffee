@@ -20,7 +20,7 @@ Object.defineProperty Error.prototype, 'toJSON', errorToJson
 module.exports = class Logger
   constructor: (opts) ->
     opts.log = opts.log or {}
-    
+
     if opts.log.logger
       # User provided their own logger
       @log = opts.log.logger
@@ -37,26 +37,28 @@ module.exports = class Logger
       ]
       @log = new Bunyan logConfig
 
-  unhandledRejection: (err) ->
-    @log.error
-      unhandledRejection: true
-      err: err,
-      err.message
+  unhandledRejection: ->
+    (err) =>
+      @log.error
+        unhandledRejection: true
+        err: err,
+        err.message
 
-  unhandledProcessException: (err) ->
-    @log.fatal
-      unhandledProcessException: true
-      err: err,
-      err.message
+  unhandledProcessException: ->
+    (err) =>
+      @log.fatal
+        unhandledProcessException: true
+        err: err,
+        err.message
 
-  unhandledRestifyException: (req, res, route, err) ->
-    @log.error
-      unhandledRestifyException: true
-      req: req
-      res: res
-      route: route
-      err: err,
-      err.message
+  unhandledRestifyException: ->
+    (req, res, route, err) =>
+      @log.error
+        unhandledRestifyException: true
+        req: req
+        res: res
+        route: route
+        err: err,
+        err.message
 
-    res.send 500, 'Internal server error'
-
+      res.send 500, 'Internal server error'
