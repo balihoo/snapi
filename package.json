@@ -29,6 +29,6 @@
     "sinon": "^1.12.2"
   },
   "scripts": {
-    "test": "node node_modules/gulp/bin/gulp.js test"
+    "test": "node node_modules/gulp/bin/gulp.js build"
   }
 }
