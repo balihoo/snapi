@@ -46,7 +46,7 @@ describe 'server unit tests', ->
           mocks.restify.expects 'createServer'
           .once()
           .returns mocked.restifyServer
-          
+
           mocks['swagger-tools'].expects 'initializeMiddleware'
 
           server.createServer api: simpleApi
@@ -67,7 +67,7 @@ describe 'server unit tests', ->
           assert.fail 'Expected MissingRouteHandlerError'
         catch err
           assert.strictEqual err.name, 'MissingRouteHandler'
-    
+
     context 'when parsers are not specified', ->
       it 'creates a server with the default parsers', ->
         bodyParser = ->
@@ -105,6 +105,40 @@ describe 'server unit tests', ->
         .once()
 
         server.createServer api: simpleApi, routeHandlers: getUsers: ->
+
+    context 'when parsers are specified', ->
+      it 'creates a server with the specified parsers', ->
+        result1 = {}
+        result2 = {}
+
+        parser1 =
+          parser: ->
+            result1
+          options: stuff: 'things'
+
+        parser2 =
+          parser: ->
+            result2
+          options: other: 'things'
+
+        mocks.restify.expects 'createServer'
+        .returns mocked.restifyServer
+
+        mocks['swagger-tools'].expects 'initializeMiddleware'
+
+        mocks.restifyServer.expects 'use'
+        .withArgs result1
+        .once()
+
+        mocks.restifyServer.expects 'use'
+        .withArgs result2
+        .once()
+
+        server.createServer
+          api: simpleApi
+          parsers: [parser1, parser2]
+          routeHandlers: getUsers: ->
+
 
   afterEach ->
     mocker.verify()
