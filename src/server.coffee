@@ -18,6 +18,12 @@ addParsers = (server, parsers) ->
     server.use restify.authorizationParser()
     server.use restify.queryParser()
 
+addMiddleware = (server, middleware) ->
+  if Array.isArray middleware
+    for middlewareFunc in middleware
+      if typeof middlewareFunc is 'function'
+        server.use middlewareFunc
+
 configureLogging = (server, opts) ->
   logger = new Logger opts
 
@@ -31,26 +37,38 @@ configureLogging = (server, opts) ->
   server.on 'uncaughtException', logger.unhandledRestifyException()
   server.logger = logger
 
-setApi = (server, opts) ->
+initializeSwagger = (server, opts) ->
   throw new error.MissingApiConfigError()  unless opts.api
-
-  swaggerTools.initializeMiddleware opts.api, (middleware) ->
-    # Interpret Swagger resources and attach metadata to request.swagger
-    server.use middleware.swaggerMetadata()
-
-    # Validate requests against the swagger metadata
-    server.use middleware.swaggerValidator()
-
-  # Add routes
-  router.registerRoutes server, opts.api, opts
+  
+  new Promise (resolve) ->
+    swaggerTools.initializeMiddleware opts.api, (swaggerMiddleware) ->
+      # Interpret Swagger resources and attach metadata to request.swagger
+      server.use swaggerMiddleware.swaggerMetadata()
+  
+      # Validate requests against the swagger metadata
+      server.use swaggerMiddleware.swaggerValidator()
+      
+      resolve()
 
 exports.createServer = (opts) ->
-  opts = opts or {}
-  server = restify.createServer opts
+  server = undefined
+  
+  Promise.try ->
+    opts = opts or {}
+    opts.restify = opts.restify or {}
+    opts.middleware = opts.middleware or {}
+  
+    server = restify.createServer opts.restify
+  
+    addParsers server, opts.parsers
+    addMiddleware server, opts.middleware.afterParsers
+    configureLogging server, opts
+  
+    server.responder = new Responder server.logger, opts.responder
+    initializeSwagger server, opts
+  .then ->
+    addMiddleware server, opts.middleware.beforeRoutes
 
-  addParsers server, opts.parsers
-  configureLogging server, opts
-  server.responder = new Responder server.logger, opts.responder
-  setApi server, opts
-
-  server
+    # Add routes
+    router.registerRoutes server, opts.api, opts
+  .return server

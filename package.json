@@ -1,6 +1,6 @@
 {
   "name": "snapi2",
-  "version": "0.2.8",
+  "version": "0.2.16",
   "description": "An API-first RESTful server framework built on Swagger and Restify",
   "author": "Jeff Flitton",
   "engines": {
