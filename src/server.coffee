@@ -6,6 +6,7 @@ Logger = require './logger'
 Responder = require './responder'
 router = require './router'
 error = require './error'
+swaggerParameterReplacer = require './middleware/swaggerParameterReplacer'
 
 addParsers = (server, parsers) ->
   if Array.isArray parsers
@@ -47,6 +48,9 @@ initializeSwagger = (server, opts) ->
   
       # Validate requests against the swagger metadata
       server.use swaggerMiddleware.swaggerValidator()
+      
+      # Replace the swagger parameter values with those provided by restify since swagger doesn't URLdecode
+      server.use swaggerParameterReplacer()
       
       resolve()
 
