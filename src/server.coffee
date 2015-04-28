@@ -75,4 +75,8 @@ exports.createServer = (opts) ->
 
     # Add routes
     router.registerRoutes server, opts.api, opts
+
+    # Add static serving if specified
+    if opts.serveStatic
+      server.get opts.serveStatic.url, restify.serveStatic opts.serveStatic
   .return server
