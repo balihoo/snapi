@@ -49,6 +49,7 @@ module.exports = class Responder
               response.json codes.successWithBody, result
             else
               response.send codes.successNoBody
+            next()
 
         .catch (err) =>
           @errorResponse err, response, next
