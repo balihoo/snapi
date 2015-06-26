@@ -1,6 +1,6 @@
 {
   "name": "snapi2",
-  "version": "0.2.21",
+  "version": "0.2.22",
   "description": "An API-first RESTful server framework built on Swagger and Restify",
   "author": "Jeff Flitton",
   "engines": {
@@ -8,6 +8,7 @@
   },
   "main": "lib/server.js",
   "dependencies": {
+    "JSONStream": "^1.0.4",
     "bluebird": "2.4.2",
     "bunyan": "^1.3.3",
     "restify": "^2.8.3",

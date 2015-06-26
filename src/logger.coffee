@@ -61,4 +61,5 @@ module.exports = class Logger
         err: err,
         err.message
 
-      res.send 500, 'Internal server error'
+      if not res.headersSent
+        res.send 500, 'Internal server error'
