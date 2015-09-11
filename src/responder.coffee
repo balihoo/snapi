@@ -45,7 +45,7 @@ module.exports = class Responder
           else
             response.header 'Content-Type', 'application/json; charset=utf-8'
             response.charSet = 'utf-8'
-            if result
+            if result or Array.isArray result
               response.json codes.successWithBody, result
             else
               response.send codes.successNoBody
