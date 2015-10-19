@@ -15,12 +15,15 @@ registerRoute = (server, method, path, handler) ->
   path = restifyPath path
 
   server[method] { url: path }, (request, response, next) ->
-    routePromise = Promise.try ->
+    Promise.try ->
       # Hand off the request to the route's handler
       handler request
 
-    # Send the route promise to the responder
-    server.responder.respond routePromise, response, next
+    .then (result) ->
+      # Send the result to the responder
+      server.responder.respond result, response, next
+    .catch (err) =>
+      server.responder.errorResponse err, response, next
 
 exports.registerRoutes = (server, apiSpec, opts) ->
   throw new error.MissingRouteHandlersConfigError  unless opts.routeHandlers
