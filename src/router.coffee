@@ -22,7 +22,7 @@ registerRoute = (server, method, path, handler) ->
     .then (result) ->
       # Send the result to the responder
       server.responder.respond result, response, next
-    .catch (err) =>
+    .catch (err) ->
       server.responder.errorResponse err, response, next
 
 exports.registerRoutes = (server, apiSpec, opts) ->

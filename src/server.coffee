@@ -7,6 +7,10 @@ Responder = require './responder'
 router = require './router'
 error = require './error'
 swaggerParameterReplacer = require './middleware/swaggerParameterReplacer'
+response = require './response'
+
+exports.Response = response.Response
+exports.RedirectResponse = response.RedirectResponse
 
 addParsers = (server, parsers) ->
   if Array.isArray parsers
