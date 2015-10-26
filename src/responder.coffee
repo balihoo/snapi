@@ -8,6 +8,7 @@ Response = require('./response').Response
 codes =
   successWithBody: 200
   successNoBody: 204
+  movedPermanently: 301
   found: 302
   internalError: 500
   invalidCredentials: 401
