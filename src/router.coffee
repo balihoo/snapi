@@ -15,7 +15,6 @@ simplifySwaggerParams = (swaggerParams = {}) ->
   
   for paramName, param of swaggerParams
     # The swagger library leaves numbers and booleans as strings when they're in the querystring or path, so fix them
-    console.log param
     switch param.schema?.type
       when 'number', 'integer'
         param.value = param.value - 0  if typeof param.value isnt 'number'
