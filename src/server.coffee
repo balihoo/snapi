@@ -74,6 +74,7 @@ exports.createServer = (opts) ->
   
     server.responder = new Responder server.logger, opts.responder
     initializeSwagger server, opts
+
   .then ->
     addMiddleware server, opts.middleware.beforeRoutes
 
@@ -81,6 +82,8 @@ exports.createServer = (opts) ->
     router.registerRoutes server, opts.api, opts
 
     # Add static serving if specified
-    if opts.serveStatic
-      server.get opts.serveStatic.url, restify.serveStatic opts.serveStatic
+    staticRoutes = opts.serveStatic or []                                                             # get static route options, or empty array if not defined
+    staticRoutes = [staticRoutes] unless staticRoutes.length                                          # assume if we have an object if there is no length operator
+    server.get staticRoute.url, restify.serveStatic staticRoute for staticRoute in staticRoutes       # now add any defined static routes to restify
+
   .return server
