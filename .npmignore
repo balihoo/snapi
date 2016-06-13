@@ -4,3 +4,4 @@ test
 src
 coverage
 node_modules
+*.log

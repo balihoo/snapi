@@ -10,7 +10,7 @@ restifyPath = (path) ->
   path = path.split('{').join ':'
   path.split('}').join ''
 
-simplifySwaggerParams = (swaggerParams = {}) ->
+exports.simplifySwaggerParams = simplifySwaggerParams = (swaggerParams = {}) ->
   params = {}
   
   for paramName, param of swaggerParams
@@ -19,8 +19,13 @@ simplifySwaggerParams = (swaggerParams = {}) ->
       when 'number', 'integer'
         param.value = param.value - 0  if typeof param.value isnt 'number'
       when 'boolean'
-        param.value = not not param.value  if typeof param.value isnt 'boolean'
-    
+        if typeof param.value isnt 'boolean'
+          param.value =
+            switch param.value
+              when 'true' then true
+              when 'false' then false
+              else param.value
+
     params[paramName] = param.value
     
   params
