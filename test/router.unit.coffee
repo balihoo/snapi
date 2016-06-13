@@ -92,7 +92,7 @@ describe 'router unit tests', ->
         assert.equal typeof params.foo, "number"
         done()
 
-    context 'when passed a truthy boolean type', ->
+    context 'when passed a truthy boolean value', ->
       it 'returns a boolean true', (done) ->
         fakeSwaggerParams =
           foo:
@@ -106,7 +106,7 @@ describe 'router unit tests', ->
         assert.equal typeof params.foo, "boolean"
         done()
 
-    context 'when passed a falsey boolean type', ->
+    context 'when passed a falsey boolean value', ->
       it 'returns a boolean false', (done) ->
         fakeSwaggerParams =
           foo:
@@ -120,16 +120,16 @@ describe 'router unit tests', ->
         assert.equal typeof params.foo, "boolean"
         done()
 
-    context 'when passed a non boolean type', ->
-      it 'returns original value unchanged', (done) ->
+    context 'when passed a non boolean value', ->
+      it 'throws an error', (done) ->
         fakeSwaggerParams =
           foo:
             schema: type: "boolean"
             value: "500"
-        expected = foo: "500"
 
-        params = router.simplifySwaggerParams(fakeSwaggerParams)
-
-        assert.deepEqual params, expected
-        assert.equal typeof params.foo, "string"
-        done()
+        try
+          router.simplifySwaggerParams(fakeSwaggerParams)
+        catch err
+          assert.strictEqual err.message, 'Invalid boolean value: 500'
+        finally
+          done()

@@ -19,12 +19,13 @@ exports.simplifySwaggerParams = simplifySwaggerParams = (swaggerParams = {}) ->
       when 'number', 'integer'
         param.value = param.value - 0  if typeof param.value isnt 'number'
       when 'boolean'
+        # swagger accepts the strings "true" and "false" as boolean values but doesn't convert them to boolean type.
         if typeof param.value isnt 'boolean'
           param.value =
             switch param.value
               when 'true' then true
               when 'false' then false
-              else param.value
+              else throw new Error "Invalid boolean value: #{param.value}"
 
     params[paramName] = param.value
     
