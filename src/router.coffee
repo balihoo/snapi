@@ -10,7 +10,7 @@ restifyPath = (path) ->
   path = path.split('{').join ':'
   path.split('}').join ''
 
-simplifySwaggerParams = (swaggerParams = {}) ->
+exports.simplifySwaggerParams = simplifySwaggerParams = (swaggerParams = {}) ->
   params = {}
   
   for paramName, param of swaggerParams
@@ -19,8 +19,14 @@ simplifySwaggerParams = (swaggerParams = {}) ->
       when 'number', 'integer'
         param.value = param.value - 0  if typeof param.value isnt 'number'
       when 'boolean'
-        param.value = not not param.value  if typeof param.value isnt 'boolean'
-    
+        # swagger accepts the strings "true" and "false" as boolean values but doesn't convert them to boolean type.
+        if typeof param.value isnt 'boolean'
+          param.value =
+            switch param.value
+              when 'true' then true
+              when 'false' then false
+              else throw new Error "Invalid boolean value: #{param.value}"
+
     params[paramName] = param.value
     
   params
