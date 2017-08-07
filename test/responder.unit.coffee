@@ -1,6 +1,6 @@
 assert = require 'assert'
 sinon = require 'sinon'
-InvalidCredentialsError = require('restify').InvalidCredentialsError
+InvalidCredentialsError = require('restify-errors').InvalidCredentialsError
 Logger = require '../src/logger'
 Responder = require '../src/responder'
 Response = require('../src/response').Response

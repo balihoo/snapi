@@ -1,6 +1,6 @@
 'use strict'
 Promise = require 'bluebird'
-restify = require 'restify'
+errors = require 'restify-errors'
 stream = require 'stream'
 jsonStream = require 'JSONStream'
 Response = require('./response').Response
@@ -20,7 +20,7 @@ module.exports = class Responder
   errorResponse: (err, response, next) ->
     @logger.log.error err
 
-    if err instanceof restify.InvalidCredentialsError
+    if err instanceof errors.InvalidCredentialsError
       response.header 'Www-Authenticate', 'Basic'
 
     next err

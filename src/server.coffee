@@ -1,6 +1,7 @@
 'use strict'
 Promise = require 'bluebird'
 restify = require 'restify'
+restifyPlugins = require 'restify-plugins'
 swaggerTools = require 'swagger-tools'
 Logger = require './logger'
 Responder = require './responder'
@@ -19,9 +20,9 @@ addParsers = (server, parsers) ->
       server.use parser.parser(parser.options)
   else
     # Use the default parsers
-    server.use restify.bodyParser(mapParams: false)
-    server.use restify.authorizationParser()
-    server.use restify.queryParser()
+    server.use restifyPlugins.bodyParser mapParams: false
+    server.use restifyPlugins.authorizationParser()
+    server.use restifyPlugins.queryParser()
 
 addMiddleware = (server, middleware) ->
   if Array.isArray middleware
@@ -33,7 +34,7 @@ configureLogging = (server, opts) ->
   logger = new Logger opts
 
   # Set up logging
-  server.on 'after', restify.auditLogger
+  server.on 'after', restifyPlugins.auditLogger
     name: 'audit'
     log: logger.log
 
@@ -84,6 +85,6 @@ exports.createServer = (opts) ->
     # Add static serving if specified
     staticRoutes = opts.serveStatic or []                                                             # get static route options, or empty array if not defined
     staticRoutes = [staticRoutes] unless staticRoutes.length                                          # assume if we have an object if there is no length operator
-    server.get staticRoute.url, restify.serveStatic staticRoute for staticRoute in staticRoutes       # now add any defined static routes to restify
+    server.get staticRoute.url, restifyPlugins.serveStatic staticRoute for staticRoute in staticRoutes       # now add any defined static routes to restify
 
   .return server
