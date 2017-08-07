@@ -1,6 +1,6 @@
 assert = require 'assert'
-router = require '../lib/router'
-server = require '../lib/server'
+router = require '../src/router'
+server = require '../src/server'
 simpleApi = require './simpleApi'
 
 fakeServer = undefined

@@ -1,6 +1,6 @@
 assert = require 'assert'
-RedirectResponse = require('../lib/response').RedirectResponse
-Responder = require '../lib/responder'
+RedirectResponse = require('../src/response').RedirectResponse
+Responder = require '../src/responder'
 responder = new Responder()
 
 uri = 'http://some.host/some/path'

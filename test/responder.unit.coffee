@@ -1,10 +1,9 @@
 assert = require 'assert'
 sinon = require 'sinon'
-Promise = require 'bluebird'
 InvalidCredentialsError = require('restify').InvalidCredentialsError
-Logger = require '../lib/logger'
-Responder = require '../lib/responder'
-Response = require('../lib/response').Response
+Logger = require '../src/logger'
+Responder = require '../src/responder'
+Response = require('../src/response').Response
 
 logger = undefined
 response = undefined

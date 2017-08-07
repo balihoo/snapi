@@ -9,14 +9,15 @@ fakeErr = new Error "loud noises!"
 describe 'logger unit tests', ->
   before ->
     mockery.enable useCleanCache: true
-    mockery.registerAllowable '../lib/logger'
+    mockery.warnOnUnregistered false
+    mockery.registerAllowable '../src/logger'
     mockery.registerMock 'bunyan', mockBunyan
-    Logger = require '../lib/logger'
+    Logger = require '../src/logger'
 
   describe 'constructor', ->
     context 'when a logger is supplied', ->
       it 'uses the supplied logger', ->
-        Logger = require '../lib/logger'
+        Logger = require '../src/logger'
 
         customLogger =
           error: ->
@@ -32,7 +33,7 @@ describe 'logger unit tests', ->
 
     context 'when no log options are supplied', ->
       it 'creates a bunyan instance with default options', ->
-        Logger = require '../lib/logger'
+        Logger = require '../src/logger'
 
         logger = new Logger {}
         assert.ok mockBunyan.calledOnce
@@ -48,7 +49,7 @@ describe 'logger unit tests', ->
 
   describe 'unhandledRejection()', ->
     it 'calls log.error', ->
-      Logger = require '../lib/logger'
+      Logger = require '../src/logger'
 
       customLogger =
         error: ->
@@ -72,7 +73,7 @@ describe 'logger unit tests', ->
 
   describe 'unhandledProcessException()', ->
     it 'calls log.fatal', ->
-      Logger = require '../lib/logger'
+      Logger = require '../src/logger'
 
       customLogger =
         error: ->
@@ -103,7 +104,7 @@ describe 'logger unit tests', ->
       fakeReq = some: 'request'
       fakeRoute = some: 'route'
 
-      Logger = require '../lib/logger'
+      Logger = require '../src/logger'
 
       customLogger =
         error: ->

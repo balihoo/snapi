@@ -20,6 +20,7 @@ exports.fakes =
 
 exports.enable = ->
   mockery.enable useCleanCache: true
+  mockery.warnOnUnregistered false
   
 exports.disable = () ->
   mockery.deregisterAll()

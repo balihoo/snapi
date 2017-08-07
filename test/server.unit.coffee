@@ -1,26 +1,24 @@
 assert = require 'assert'
-sinon = require 'sinon'
 mocker = require './mocker'
 simpleApi = require './simpleApi'
 
 server = undefined
 mocks = undefined
 mocked = undefined
-fakeErr = new Error "loud noises!"
 
 describe 'server unit tests', ->
   beforeEach ->
     mocker.mock 'bluebird'
     mocker.mock 'swagger-tools'
     mocker.mock 'restify', mocker.fakes.restify
-    mocker.mock '../lib/logger'
-    mocker.mock '../lib/responder'
-    mocker.mock '../lib/router'
-    mocker.mock '../lib/error'
+    mocker.mock '../src/logger'
+    mocker.mock '../src/responder'
+    mocker.mock '../src/router'
+    mocker.mock '../src/error'
     mocker.mockInternal 'restifyServer', mocker.fakes.restifyServer
-    mocker.allow '../lib/server'
+    mocker.allow '../src/server'
     mocker.enable()
-    server = require '../lib/server'
+    server = require '../src/server'
     mocks = mocker.mocks
     mocked = mocker.mocked
 
