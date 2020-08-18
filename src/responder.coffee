@@ -2,7 +2,7 @@
 Promise = require 'bluebird'
 errors = require 'restify-errors'
 stream = require 'stream'
-jsonStream = require 'JSONStream'
+jsonStream = require 'jsonstream2'
 Response = require('./response').Response
 
 codes =
