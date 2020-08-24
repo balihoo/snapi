@@ -1,8 +1,8 @@
 {
   "name": "balihoo-snapi",
-  "version": "2.0.6",
+  "version": "2.0.8",
   "description": "An API-first RESTful server framework built on Swagger and Restify",
-  "author": "Jeff Flitton",
+  "author": "Balihoo and Jeff Flinton",
   "engines": {
     "node": ">= 4.0.0"
   },
@@ -18,18 +18,18 @@
     "swagger2-utils": "2.0.10"
   },
   "devDependencies": {
-    "coffee-script": "1.12.7",
+    "coffeescript": "2.5.1",
     "del": "3.0.0",
-    "mocha": "3.5.0",
+    "mocha": "8.1.1",
     "mockery": "2.1.0",
     "nyc": "11.1.0",
     "sinon": "3.0.0"
   },
   "scripts": {
     "clean": "rm -rf lib",
-    "compile": "npm run-script clean;node_modules/coffee-script/bin/coffee -cb -o lib src",
-    "watch": "node_modules/coffee-script/bin/coffee -cb -o lib -w src",
-    "test": "node_modules/.bin/mocha $(find test -name '*.test.coffee') --compilers coffee:coffee-script/register",
+    "compile": "npm run-script clean;node_modules/coffeescript/bin/coffee -cb -o lib src",
+    "watch": "node_modules/coffeescript/bin/coffee -cb -o lib -w src",
+    "test": "node_modules/.bin/mocha $(find test -name '*.unit.coffee') --require coffeescript/register",
     "cover": "node_modules/.bin/nyc npm test;node_modules/.bin/nyc report --reporter=html"
   },
   "directories": {
@@ -37,7 +37,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jflitton/snapi.git"
+    "url": "https://github.com/balihoo/snapi.git"
   },
   "keywords": [
     "api-first",
@@ -47,9 +47,9 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/jflitton/snapi/issues"
+    "url": "https://github.com/balihoo/snapi/issues"
   },
-  "homepage": "https://github.com/jflitton/snapi",
+  "homepage": "https://github.com/balihoo/snapi",
   "nyc": {
     "extension": [
       ".coffee"
