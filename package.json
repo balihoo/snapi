@@ -20,7 +20,7 @@
   "devDependencies": {
     "coffeescript": "2.5.1",
     "del": "3.0.0",
-    "mocha": "8.1.1",
+    "mocha": "8.4.0",
     "mockery": "2.1.0",
     "nyc": "11.1.0",
     "sinon": "3.0.0"
