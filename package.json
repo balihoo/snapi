@@ -14,7 +14,7 @@
     "restify": "5.0.1",
     "restify-errors": "4.3.0",
     "restify-plugins": "1.6.0",
-    "swagger-tools": "0.10.1",
+    "swagger-tools": "0.10.4",
     "swagger2-utils": "2.0.10"
   },
   "devDependencies": {
