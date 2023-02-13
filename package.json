@@ -11,7 +11,7 @@
     "jsonstream2": "3.0.0",
     "bluebird": "3.5.0",
     "bunyan": "1.8.12",
-    "restify": "5.0.1",
+    "restify": "4.3.4",
     "restify-errors": "4.3.0",
     "restify-plugins": "1.6.0",
     "swagger-tools": "0.10.1",
